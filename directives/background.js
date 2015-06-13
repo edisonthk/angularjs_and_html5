@@ -12,11 +12,23 @@ angular.module('myApp.background',[])
     return {
       restrict: 'E',
       transclude: true,
-      template: '<canvas width="{{canvas_width}}" height="{{canvas_height}}"></canvas><div style="position:absolute;" ng-transclude></div>',
-      controller: ['$rootScope','$scope',function(rootScope,scope){
+      scope: {
+        control: '=',
+      },
+      template: '<canvas id="gafewVA21Z" width="{{canvas_width}}" height="{{canvas_height}}"></canvas><div style="position:absolute;" ng-transclude></div>',
+      link: function(scope){
         
-        var that = this;
-        var cnt_pause = 0;
+        var that = this,
+            control = {},
+            cnt_pause = 0
+            canvas = document.getElementById("gafewVA21Z"),
+            currentFrameIndex = 0,
+            currentFrames = [],
+            currentFrame = null,
+            frames = [],
+            intervalIndex = null
+            ;
+        
         
         // ページ遷移する際に使うオブジェクトです。
         // 現在の状態を表すフラグです。
@@ -33,135 +45,98 @@ angular.module('myApp.background',[])
         scope.eventsWhenCanPlay = [];
         scope.eventsWhenEnded = [];
 
-        // ビデオをCanvasにコピー
-        var video = document.getElementById("video");
-        video.loop = false;
-        video.muted = true;
-        video.currentTime = 0.0;
-        video.pause();
-
-
+        
         var ctx = document.getElementsByTagName("canvas")[0].getContext("2d");
 
         var sizingEvent = function(){
-          scope.canvas_height = d[0].body.offsetHeight;
-          scope.canvas_width = d[0].body.offsetWidth;
-          if(scope.state.initial > 0){
-            ctx.drawImage(video, 0, 0, scope.canvas_width, scope.canvas_height);
-          }
+            scope.canvas_height = window.innerHeight;
+            scope.canvas_width = window.innerWidth;
+            if(currentFrame != null){
+                ctx.drawImage(currentFrame, 0, 0, scope.canvas_width, scope.canvas_height);
+            }
         }
         sizingEvent();  
         
         // resizeイベントを遅延する効果が働きます
         angular.element(w).on('resize', function(){
-          clearTimeout(scope.system.timeout_id_for_background);
-            scope.system.timeout_id_for_background = setTimeout(function(){
+            clearTimeout(scope.timeout_id_for_background);
+            scope.timeout_id_for_background = setTimeout(function(){
             
-            // scopeを更新
-            scope.$apply(function(){
-              sizingEvent();
-            });
-          }, 1000);
+                // scopeを更新
+                sizingEvent();
+            
+            }, 1000);
         });
 
 
         
-        // BEGIN: canvas drawImage
-        setInterval(function(){
+        var canvasDrawImage = function(){
 
-          if(scope.state.current == scope.state.FLAG_PAUSE){
-            if(cnt_pause > 20){
-              scope.state.current = scope.state.FLAG_IDLE;
-              cnt_pause = 0 ;
-            }
-            cnt_pause++;
-          } 
-
-          if(scope.interruptEvent){
-            var afterInterrupt = scope.interruptEvent();
-            delete scope.interruptEvent;
-          }
-
-          if(typeof afterInterrupt === "undefined" || afterInterrupt){
             if(scope.state.current == scope.state.FLAG_PLAY || scope.state.current == scope.state.FLAG_IDLE){
-              ctx.drawImage(video, 0, 0, scope.canvas_width, scope.canvas_height);
+                if(currentFrameIndex < currentFrames.length) {
+                    currentFrame = currentFrames[currentFrameIndex];
+                    try{
+                        ctx.drawImage(currentFrame, 0, 0, scope.canvas_width, scope.canvas_height);    
+                    }catch(err){}
+                    
+                    currentFrameIndex ++;
+                }else{
+                    scope.control.stop();
+                    if(scope.eventsWhenEnded.length > 0 ) {
+                        for (var i = 0; i < scope.eventsWhenEnded.length; i++) {
+                            scope.eventsWhenEnded[i]();
+                        }
+                    }
+                }
             }
-          }
           
-        },1000/20);
-        // END: canvas drawImage
-
+        };
 
         // videoタグに関するイベント
-        video.addEventListener("canplay",function(){
-          cnt_pause = 0 ;
-          // API: ビデオのロードが完了したらexecuteUntilCanplayイベントを実行
-          if(scope.eventsWhenCanPlay.length > 0){
-            var __temp = scope.eventsWhenCanPlay;
-            scope.eventsWhenCanPlay = [];
-            for (var i = 0; i < __temp.length; i++) {
-              __temp[i](this);
-            };
-          }
-
-          if(scope.state.current == scope.state.FLAG_PLAY){
-            this.play();
-          }else{
-            this.pause();
-          }
-
-          if(scope.state.initial < 3){
-            ctx.drawImage(video, 0, 0, scope.canvas_width, scope.canvas_height);
-            scope.state.initial++;
-          }
-        });
-
-        video.addEventListener("ended",function(){
-          cnt_pause = 0 ;
-          scope.state.current = scope.state.FLAG_PAUSE;
-          // API: ビデオのプレイが終了したらeventWhenEndedイベントを実行
-          if(scope.eventsWhenEnded.length > 0){
-            var _temp = scope.eventsWhenEnded;
-            scope.eventsWhenEnded = [];
-            for (var i = 0; i < _temp.length; i++) {
-              _temp[i](this);
-            };
-          }
-        });
-        
-        // BEGIN: API 
-        rootScope.getVideo = function() {
-          return video;
+        // BEGIN: API
+        scope.control.setFrames = function(frames) {
+            scope.control.stop();
+            currentFrames = frames;
+            if(currentFrames.length > 0) {
+                currentFrame = currentFrames[0];
+            }
         }
-        rootScope.getBackgroundContext = function() {
+        scope.control.play = function() {
+            clearInterval(intervalIndex);
+            scope.state.current = scope.state.FLAG_PLAY;
+            currentFrameIndex = 0;
+            intervalIndex = setInterval(canvasDrawImage, 1000/20);
+        };
+        scope.control.stop = function() {
+            scope.state.current = scope.state.FLAG_PAUSE;
+            clearInterval(intervalIndex);
+        };
+        scope.control.pause = function() {
+            scope.control.stop();
+        }
+        scope.control.getBackgroundContext = function() {
           return ctx;
         }
-        rootScope.getState = function() {
+        scope.control.getState = function() {
           return scope.state;
         }
-        rootScope.playWithFlag = function() {
-          scope.state.current = scope.state.FLAG_PLAY;
-        }
-        rootScope.pauseWithFlag = function() {
-          scope.state.current = scope.state.FLAG_PAUSE;
-        }
-        rootScope.addEventWhenCanplay = function(_event){
+        scope.control.addEventWhenCanplay = function(_event){
           if(typeof _event === "function"){
             scope.eventsWhenCanPlay.push(_event);
           }
         }
-        rootScope.addEventWhenEnded = function(_event){
+        scope.control.addEventWhenEnded = function(_event){
           if(typeof _event === "function"){
             scope.eventsWhenEnded.push(_event);
           }
         }
-        rootScope.clearAllEvents = function() {
+        scope.control.clearAllEvents = function() {
           scope.eventsWhenEnded = [];
           scope.eventsWhenCanPlay = [];
         }
         // END: API
 
         
-      }]
+      }
     }
   }]);
