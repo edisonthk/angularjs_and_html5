@@ -41,11 +41,11 @@ angular.module('myApp.factory', [])
             frontFrames.push(img);
         };
 
-        for (var i = 0; i < 40; i++) {
-            var img = new Image;
-            img.src = frontFramesPathPrefix+"profile"+leadingZeroString(2, i)+".jpg";
-            profileFrames.push(img);
-        };
+        // for (var i = 0; i < 40; i++) {
+        //     var img = new Image;
+        //     img.src = frontFramesPathPrefix+"profile"+leadingZeroString(2, i)+".jpg";
+        //     profileFrames.push(img);
+        // };
 
         for (var i = 0; i < 10; i++) {
             var img = new Image;
@@ -66,11 +66,11 @@ angular.module('myApp.factory', [])
             frontEndFrames.push(img);
         };
 
-        for (var i = 0; i < 45; i++) {
-            var img = new Image;
-            img.src = endFramesPathPrefix+"profile"+leadingZeroString(2, i)+".jpg";
-            profileEndFrames.push(img);
-        };
+        // for (var i = 0; i < 45; i++) {
+        //     var img = new Image;
+        //     img.src = endFramesPathPrefix+"profile"+leadingZeroString(2, i)+".jpg";
+        //     profileEndFrames.push(img);
+        // };
 
         for (var i = 0; i < 66; i++) {
             var img = new Image;
@@ -80,7 +80,11 @@ angular.module('myApp.factory', [])
 
         for (var i = 0; i < 39; i++) {
             var img = new Image;
-            img.src = endFramesPathPrefix+"dice"+leadingZeroString(2, i)+".jpg";
+            if(i > 24) {
+                img.src = endFramesPathPrefix+"dice25.jpg";
+            }else{
+                img.src = endFramesPathPrefix+"dice"+leadingZeroString(2, i)+".jpg";    
+            }
             interestEndFrames.push(img);
         };
 
