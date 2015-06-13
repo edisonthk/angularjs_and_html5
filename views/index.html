@@ -1,0 +1,21 @@
+<div ng-controller="HelloController">
+    <div class="logo sidewidth">
+        <h1>@edisonthk</h1>
+        <h5>プロフィール</h5>
+    </div>
+
+    <div class="navmenu sidewidth">
+        <ul>
+            <li><a href="/">ホーム      <br/><small>HOME</small></a></li>
+            <!-- <li><a href="/profile">プロフィール      <br/><small>PROFILE</small></a></li> -->
+            <li><a href="/skills">スキル         <br/><small>SKILL</small></a></li>
+            <li><a href="/interest">趣味      <br/><small>INTEREST</small></a></li>
+        </ul>
+    </div>
+
+    <div class="content" ng-include="userfield.content"></div>
+
+    <background id="bg" class="bg"></background>
+
+    <video id="video" autoplay="false"></video>
+</div>
