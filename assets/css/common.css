@@ -1,0 +1,164 @@
+/* フルスクリーン */
+body{
+	position: relative;
+}
+html, body{
+    width: 100%;
+    height: 100%;
+    min-height: 620px;
+	min-width: 1178px;
+}
+
+body {
+	background-color: yellow;
+}
+
+a {
+	color: #e94f1d;
+}
+video {
+	display: none;
+}
+small {
+	font-size: 50%;
+	font-weight: bold;
+}
+h1,h2,h3{
+  	margin-bottom: 10px;	
+}
+.bg {
+	position: absolute;
+	z-index: -1;
+	top:0;
+	left: 0;
+	bottom: 0;
+	right: 0;	
+	height: 100%;
+	width: 100%;
+}
+.logo {
+	display: inline-block;
+	margin-top: 20px;
+	margin-left: 50px;
+	background-color: white;
+	padding:5px 0;
+}
+.logo * {
+	display: block;
+	margin: 0;
+	padding: 0 20px;
+}
+.logo h1 {
+	font-size: 25px;
+	line-height: 25px;
+	color: #e94f1d;
+	margin-bottom: 5px;
+}
+.logo h5 {
+	font-size: 12px;
+	line-height: 12px;
+	color: #999;
+}
+.sidewidth {
+	width: 200px;
+}
+.animated_wrapper {
+	position: relative;
+}
+.animated_wrapper .animated {
+	position: absolute;
+	-webkit-animation-duration: 0.5s;
+}
+.navmenu {
+	margin-left: 50px;
+	margin-top: 7px;
+}
+.navmenu ul, .navmenu li {
+	width: 100%;
+}
+.navmenu ul {
+	display: inline-block;
+	-moz-box-shadow: 3px 3px 0px rgba(0, 43, 54, 0.06);
+	-webkit-box-shadow: 3px 3px 0px rgba(0, 43, 54, 0.06);
+	box-shadow: 3px 3px 0px rgba(0, 43, 54, 0.06);
+}
+.navmenu li {
+	display: block;
+	line-height: 1;
+	vertical-align: middle;
+	padding: 10px 0;
+	border-bottom: 1px solid #e6e6e6;
+	text-align: left;
+	background-color: #fff;
+	color: black;
+	font-size: 20px;
+}
+.navmenu li:last-child {
+	border-bottom: 0px;
+}
+.navmenu li a {
+	padding-left: 20px;
+	display: block;
+}
+.navmenu li a small {
+	color: black;
+}
+
+.content {
+	z-index: 1;
+	position: absolute;
+	bottom: 30px;
+	right: 30px;
+	display: block;
+}
+.content .hand {
+	position: absolute;
+	bottom: 0;
+	width: 666px;
+	height: 737px;
+}
+
+.angular-google-map-container {
+	width: 100%;
+	height: 100%;
+	z-index: 4;
+	background-color: blue;
+}
+
+.detail.shopname {
+	font-size: 170%;
+	font-weight: bold;
+	padding-bottom: 10px;
+}
+.detail.kigaruni {
+	line-height: 3;
+	border-top: 1px solid #e4007f;
+}
+
+.content .title {
+	border-left: 5px solid #e94f1d;
+	color: #e94f1d;
+	font-size: 30px;
+}
+.board {
+	background-color: white;
+	opacity: 0.95;
+	padding: 20px 0;
+	margin-right: 100px;
+}
+.board * {
+	padding: 0 20px;
+}
+
+#skills {
+	width: 300px;
+}
+#skills p.essay {
+	line-height: 1.3;
+}
+#interest {
+	width: 400px;
+}
+#interest h4 {
+	font-weight: bold;
+}
