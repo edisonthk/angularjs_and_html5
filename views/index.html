@@ -6,14 +6,23 @@
 
     <div class="navmenu sidewidth">
         <ul>
-            <li><a href="/">ホーム      <br/><small>HOME</small></a></li>
+            <li ng-class="{active: currentPath == 'front'}">
+                <a href="/">ホーム<br/><small>HOME</small></a>
+            </li>
             <!-- <li><a href="/profile">プロフィール      <br/><small>PROFILE</small></a></li> -->
-            <li><a href="/skills">スキル         <br/><small>SKILL</small></a></li>
-            <li><a href="/interest">趣味      <br/><small>INTEREST</small></a></li>
+            <li ng-class="{active: currentPath == 'skills'}">
+                <a href="/skills">スキル<br/><small>SKILL</small></a>
+            </li>
+            <li ng-class="{active: currentPath == 'interest'}">
+                <a href="/interest">趣味<br/><small>INTEREST</small></a>
+            </li>
         </ul>
     </div>
 
-    <div class="content" ng-include="userfield.content"></div>
+    <div class="content" 
+        style="opacity: 0;" 
+        ng-style="{'opacity': framesLoadedFlag ? 1 : 0 }"
+        ng-include="userfield.content"></div>
 
     <background control="bgControl" class="bg"></background>
 

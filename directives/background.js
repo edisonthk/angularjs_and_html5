@@ -26,7 +26,8 @@ angular.module('myApp.background',[])
             currentFrames = [],
             currentFrame = null,
             frames = [],
-            intervalIndex = null
+            intervalIndex = null,
+            resizedCallback = null
             ;
         
         
@@ -51,21 +52,44 @@ angular.module('myApp.background',[])
         var sizingEvent = function(){
             scope.canvas_height = window.innerHeight;
             scope.canvas_width = window.innerWidth;
-            if(currentFrame != null){
-                ctx.drawImage(currentFrame, 0, 0, scope.canvas_width, scope.canvas_height);
+            if(scope.canvas_width > scope.canvas_height) {
+                CURRENT_SCREEN = HORIZONTAL_SCREEN;
+            }else{
+                CURRENT_SCREEN = VERTICAL_SCREEN;
             }
         }
         sizingEvent();  
         
         // resizeイベントを遅延する効果が働きます
-        angular.element(w).on('resize', function(){
+        scope.$watch('canvas_width', function(newValues) {
             clearTimeout(scope.timeout_id_for_background);
             scope.timeout_id_for_background = setTimeout(function(){
-            
-                // scopeを更新
-                sizingEvent();
-            
-            }, 1000);
+                if(currentFrame != null){
+                    ctx.drawImage(currentFrame, 0, 0, newValues, scope.canvas_height);       
+                }
+                
+                if(typeof resizedCallback === 'function') {
+                    resizedCallback();
+                }
+            },100);
+        });
+        scope.$watch('canvas_height', function(newValues) {
+            clearTimeout(scope.timeout_id_for_background);
+            scope.timeout_id_for_background = setTimeout(function(){
+
+                if(currentFrame != null){
+                    ctx.drawImage(currentFrame, 0, 0, scope.canvas_width, newValues);  
+                }
+
+                if(typeof resizedCallback === 'function') {
+                    resizedCallback();
+                }  
+            }, 100);
+        });
+
+        angular.element(w).on('resize', function(){
+            // scopeを更新
+            sizingEvent();
         });
 
 
@@ -73,8 +97,10 @@ angular.module('myApp.background',[])
         var canvasDrawImage = function(){
 
             if(scope.state.current == scope.state.FLAG_PLAY || scope.state.current == scope.state.FLAG_IDLE){
+
                 if(currentFrameIndex < currentFrames.length) {
                     currentFrame = currentFrames[currentFrameIndex];
+
                     try{
                         ctx.drawImage(currentFrame, 0, 0, scope.canvas_width, scope.canvas_height);    
                     }catch(err){}
@@ -114,11 +140,20 @@ angular.module('myApp.background',[])
         scope.control.pause = function() {
             scope.control.stop();
         }
+        scope.control.drawAgain = function() {
+
+
+            ctx.drawImage(currentFrame, 0, 0, scope.canvas_width, scope.canvas_height);    
+            
+        }
         scope.control.getBackgroundContext = function() {
           return ctx;
         }
         scope.control.getState = function() {
           return scope.state;
+        }
+        scope.control.isPlaying = function() {
+            return scope.state.current == scope.state.FLAG_PLAY;
         }
         scope.control.addEventWhenCanplay = function(_event){
           if(typeof _event === "function"){
@@ -133,6 +168,11 @@ angular.module('myApp.background',[])
         scope.control.clearAllEvents = function() {
           scope.eventsWhenEnded = [];
           scope.eventsWhenCanPlay = [];
+        }
+        scope.control.addResizedCallback = function(_event) {
+            if(typeof _event === "function"){
+                resizedCallback = _event;
+            }
         }
         // END: API
 

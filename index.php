@@ -13,15 +13,21 @@
 </head>
 <body ng-include="'/views/index.html'">
 
-	
-	<script type="text/javascript" src="/dist/angularjs/angular.min.js"></script>
-	<script type="text/javascript" src="/dist/angularjs/angular-route.min.js"></script>
-	<script type="text/javascript" src="/dist/angularjs/angular-sanitize.min.js"></script>
-	<script type="text/javascript" src="/dist/angularjs/angular-resource.min.js"></script>
-	<script type="text/javascript" src="/controllers/FramesFactory.js"></script>
-	<script type="text/javascript" src="/controllers/helloController.js"></script>
-	<script type="text/javascript" src="/directives/background.js"></script>
-	<script type="text/javascript" src="/directives/body.js"></script>
-	<script type="text/javascript" src="/routes.js"></script>
+	<script>
+    var HORIZONTAL_SCREEN = 1,
+        VERTICAL_SCREEN = 2,
+        UNKNOWN_SCREEN = 0,
+        CURRENT_SCREEN = UNKNOWN_SCREEN
+    ;
+    </script>
+	<script src="/dist/angularjs/angular.min.js"></script>
+	<script src="/dist/angularjs/angular-route.min.js"></script>
+	<script src="/dist/angularjs/angular-sanitize.min.js"></script>
+	<script src="/dist/angularjs/angular-resource.min.js"></script>
+	<script src="/controllers/FramesFactory.js"></script>
+	<script src="/controllers/helloController.js"></script>
+	<script src="/directives/background.js"></script>
+	<script src="/directives/body.js"></script>
+	<script src="/routes.js"></script>
 </body>
 </html>

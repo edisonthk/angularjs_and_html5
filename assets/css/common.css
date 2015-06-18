@@ -58,6 +58,7 @@ h1,h2,h3{
 	color: #999;
 }
 .sidewidth {
+    overflow-x: hidden;
 	width: 200px;
 }
 .animated_wrapper {
@@ -79,6 +80,9 @@ h1,h2,h3{
 	-moz-box-shadow: 3px 3px 0px rgba(0, 43, 54, 0.06);
 	-webkit-box-shadow: 3px 3px 0px rgba(0, 43, 54, 0.06);
 	box-shadow: 3px 3px 0px rgba(0, 43, 54, 0.06);
+}
+.navmenu li.active {
+    border-left: 4px solid #e94f1d;
 }
 .navmenu li {
 	display: block;
@@ -161,7 +165,7 @@ h1,h2,h3{
 	font-weight: bold;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 670px) {
     .sidewidth {
         width: 75px;
     }
