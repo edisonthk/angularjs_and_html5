@@ -3,12 +3,7 @@ angular.module('myApp.factory', [])
 
         
 
-        var verticalImageWidth = 450,
-            verticalImageHeight = 749,
-            horizontalImageWidth = 1020,
-            horizontalImageHeight = 574,
-
-            frontFramesPathPrefix,
+        var frontFramesPathPrefix,
             endFramesPathPrefix,
             direction,
 
@@ -68,7 +63,6 @@ angular.module('myApp.factory', [])
             for (var i = 0; i < 47; i++) {
                 var img = new Image;
                 img.src = frontFramesPathPrefix+"front"+leadingZeroString(2, i)+".jpg";
-                img.realSize = getRealImageSize();
                 img.onload = loaded;
                 frontFrames.push(img);
             };
