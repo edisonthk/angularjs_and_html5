@@ -218,7 +218,8 @@ angular.module('myApp.background',[])
             drawProgressBar(progress);
         }
         scope.control.drawAgain = function() {
-            ctx.drawImage(currentFrame, 0, 0, scope.canvas_width, scope.canvas_height);                
+            console.log("draw again");
+            drawImageProp(ctx, currentFrame, 0, 0 ,scope.canvas_width, scope.canvas_height);
         }
         scope.control.getBackgroundContext = function() {
           return ctx;
