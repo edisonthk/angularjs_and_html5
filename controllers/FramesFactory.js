@@ -1,12 +1,18 @@
 angular.module('myApp.factory', [])
     .factory('FramesFactory', [ function(){
 
-        var frontFramesPathPrefix,
-            endFramesPathPrefix,
-            direction
-        ;
+        
 
-        var frontFrames = [],
+        var verticalImageWidth = 450,
+            verticalImageHeight = 749,
+            horizontalImageWidth = 1020,
+            horizontalImageHeight = 574,
+
+            frontFramesPathPrefix,
+            endFramesPathPrefix,
+            direction,
+
+            frontFrames = [],
             profileFrames = [],
             skillsFrames = [],
             interestFrames = [],
@@ -18,6 +24,7 @@ angular.module('myApp.factory', [])
             loadedCallback = null,
             progressUpdateCallback = null
             ;
+
 
         var leadingZeroString = function(len, number) {
             var zeros = "0000000000" + number;
@@ -61,6 +68,7 @@ angular.module('myApp.factory', [])
             for (var i = 0; i < 47; i++) {
                 var img = new Image;
                 img.src = frontFramesPathPrefix+"front"+leadingZeroString(2, i)+".jpg";
+                img.realSize = getRealImageSize();
                 img.onload = loaded;
                 frontFrames.push(img);
             };
