@@ -22,7 +22,6 @@ angular.module('myApp.controllers', [])
     };
 
     // ビデオのパス
-    
     scope.getVideoFront = {
         front:    function() { return framesFactory.getFrontFrames(true); },
         profile:  function() { return framesFactory.getProfileFrames(true); },
@@ -47,13 +46,15 @@ angular.module('myApp.controllers', [])
 
     var backgroundLoadedCallback = function() {
         scope.bgControl.addResizedCallback(function() {
+            scope.framesLoadedFlag = false;
             framesFactory.reload();
+            scope.$apply();
         }); 
+        
     }
 
     var framesLoadedCallback = function() {
         scope.framesLoadedFlag = true;
-
         if(scope.bgControl.isPlaying()) {
             setCurrentFrames();
         }else{
@@ -64,7 +65,7 @@ angular.module('myApp.controllers', [])
                 scope.bgControl.drawAgain();
             }
         } 
-
+        document.getElementBy
         scope.$apply();
     };
 
@@ -112,9 +113,9 @@ angular.module('myApp.controllers', [])
         }
     });  
 
-    scope.$watch('bgControl', function() {
+    scope.indexLoadedCallback = function() {
         backgroundLoadedCallback();
-    });
+    }
 
     framesFactory.setLoadedCallback(framesLoadedCallback);
 

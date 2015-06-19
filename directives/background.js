@@ -49,6 +49,42 @@ angular.module('myApp.background',[])
         
         var ctx = document.getElementsByTagName("canvas")[0].getContext("2d");
 
+        var progressBarDrawingFlag = false;
+        var drawProgressBar = function(progress,cb) {
+            
+            if(progressBarDrawingFlag) {
+                return;
+            }
+
+            progressBarDrawingFlag = true;
+
+            var size = 300;
+            var lineWidth = 10;
+            ctx.translate(scope.canvas_width / 2, scope.canvas_height / 2); // change center
+            // ctx.rotate((-1 / 2 + options.rotate / 180) * Math.PI); // rotate -90 deg
+
+            //imd = ctx.getImageData(0, 0, 240, 240);
+            var radius = (size - lineWidth) / 2;
+            console.log("fdsfsd");
+            var drawCircle = function(color, percent) {
+                    percent = Math.min(Math.max(0, percent || 1), 1);
+                    ctx.beginPath();
+                    ctx.arc(0, 0, radius, 0, Math.PI * 2 * percent, false);
+                    ctx.strokeStyle = color;
+                    ctx.lineCap = 'round'; // butt, round or square
+                    ctx.lineWidth = lineWidth
+                    ctx.stroke();
+            };
+
+            progress = parseInt(progress);
+
+            drawCircle('#efefef', 100 / 100);
+            drawCircle('#555555', progress / 100);
+            setTimeout(function() {
+                progressBarDrawingFlag = false;
+            },1);
+        }
+
         var sizingEvent = function(){
             scope.canvas_height = window.innerHeight;
             scope.canvas_width = window.innerWidth;
@@ -64,9 +100,6 @@ angular.module('myApp.background',[])
         scope.$watch('canvas_width', function(newValues) {
             clearTimeout(scope.timeout_id_for_background);
             scope.timeout_id_for_background = setTimeout(function(){
-                if(currentFrame != null){
-                    ctx.drawImage(currentFrame, 0, 0, newValues, scope.canvas_height);       
-                }
                 
                 if(typeof resizedCallback === 'function') {
                     resizedCallback();
@@ -76,10 +109,6 @@ angular.module('myApp.background',[])
         scope.$watch('canvas_height', function(newValues) {
             clearTimeout(scope.timeout_id_for_background);
             scope.timeout_id_for_background = setTimeout(function(){
-
-                if(currentFrame != null){
-                    ctx.drawImage(currentFrame, 0, 0, scope.canvas_width, newValues);  
-                }
 
                 if(typeof resizedCallback === 'function') {
                     resizedCallback();
@@ -92,12 +121,11 @@ angular.module('myApp.background',[])
             sizingEvent();
         });
 
-
         
         var canvasDrawImage = function(){
 
             if(scope.state.current == scope.state.FLAG_PLAY || scope.state.current == scope.state.FLAG_IDLE){
-
+                console.log("play image");
                 if(currentFrameIndex < currentFrames.length) {
                     currentFrame = currentFrames[currentFrameIndex];
 
@@ -140,11 +168,11 @@ angular.module('myApp.background',[])
         scope.control.pause = function() {
             scope.control.stop();
         }
+        scope.control.drawProgressBar = function(progress) {
+            drawProgressBar(progress);
+        }
         scope.control.drawAgain = function() {
-
-
-            ctx.drawImage(currentFrame, 0, 0, scope.canvas_width, scope.canvas_height);    
-            
+            ctx.drawImage(currentFrame, 0, 0, scope.canvas_width, scope.canvas_height);                
         }
         scope.control.getBackgroundContext = function() {
           return ctx;

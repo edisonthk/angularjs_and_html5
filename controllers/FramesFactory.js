@@ -15,7 +15,8 @@ angular.module('myApp.factory', [])
             profileEndFrames = [],
             skillsEndFrames = [],
             interestEndFrames = [],
-            loadedCallback = null
+            loadedCallback = null,
+            progressUpdateCallback = null
             ;
 
         var leadingZeroString = function(len, number) {
@@ -27,6 +28,9 @@ angular.module('myApp.factory', [])
         var loadedLen = 0;
         var loaded = function() {
             loadedLen ++;
+            if(typeof progressUpdateCallback === 'function') {
+                progressUpdateCallback(loadedLen / totalLength * 100);
+            }
             if(loadedLen >= totalLength) {
                 if(typeof loadedCallback === 'function') {
                     loadedCallback();
@@ -66,7 +70,7 @@ angular.module('myApp.factory', [])
             //     img.src = frontFramesPathPrefix+"profile"+leadingZeroString(2, i)+".jpg";
             //     profileFrames.push(img);
             // };
-
+            
             for (var i = 0; i < 10; i++) {
                 var img = new Image;
                 img.src = frontFramesPathPrefix+"skills"+leadingZeroString(2, i)+".jpg";
@@ -141,6 +145,9 @@ angular.module('myApp.factory', [])
                     return interestFrames;    
                 }
                 return interestEndFrames;
+            },
+            setProgressUpdateCallback: function(cb) {
+                progressUpdateCallback = cb;
             },
             setLoadedCallback: function(cb) {
                 loadedCallback = cb;

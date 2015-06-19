@@ -5,7 +5,9 @@ angular.module('myApp.directive',[])
       restrict: 'E',
       link: function(scope, element, attrs){
         // 初期化
-        scope.system = {};
+        
+        scope.system = scope.system || {};
+        
         scope.system.timeout_id = 0;
         var sizingEvent = function(){
            scope.system.height = d[0].body.offsetHeight;

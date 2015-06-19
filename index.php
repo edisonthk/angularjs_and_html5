@@ -11,8 +11,13 @@
 	<link rel="stylesheet" type="text/css" href="/assets/css/common.css">
 
 </head>
-<body ng-include="'/views/index.html'">
-
+<body ng-controller="HelloController">
+    <div ng-if="system.initial || !framesLoadedFlag" class="spinner">
+        <img src="spinner2.gif">
+        <p>Loading ...</p>
+    </div>
+    
+    <ng-include src="'/views/index.html'" onload="indexLoadedCallback()"></ng-include>
 	<script>
     var HORIZONTAL_SCREEN = 1,
         VERTICAL_SCREEN = 2,
