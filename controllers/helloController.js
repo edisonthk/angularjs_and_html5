@@ -6,10 +6,10 @@ angular.module('myApp.controllers', [])
     // アルゴリズムをスムーズに行われるために必要とされるフラグはここで管理しています。
     // 
     // * initial 初期フラグ   - このサイトのロードが初めてなのかを確認するフラグです。
-    // * prev_path 前回のパス - 前回のuri。もし初期状態だと、prev_pathはNULLになる。
+    // * prevPath 前回のパス - 前回のuri。もし初期状態だと、prevPathはNULLになる。
     scope.system = {}
     scope.system.initial = true;
-    scope.prev_path = null;
+    scope.prevPath = null;
     scope.bgControl = {};
     scope.currentPath = "";
 
@@ -22,18 +22,6 @@ angular.module('myApp.controllers', [])
     };
 
     // ビデオのパス
-    scope.getVideoFront = {
-        front:    function() { return framesFactory.getFrontFrames(true); },
-        profile:  function() { return framesFactory.getProfileFrames(true); },
-        skills:   function() { return framesFactory.getSkillsFrames(true); },
-        interest: function() { return framesFactory.getInterestFrames(true); },
-    }
-    scope.getVideoEnd = {
-        front:    function() { return framesFactory.getFrontFrames(false); },
-        profile:  function() { return framesFactory.getProfileFrames(false); },
-        skills:   function() { return framesFactory.getSkillsFrames(false); },
-        interest: function() { return framesFactory.getInterestFrames(false); },
-    }
     scope.animate_state = false;
 
     // 
@@ -51,10 +39,27 @@ angular.module('myApp.controllers', [])
             scope.$apply();
         }); 
         
+
+        framesFactory.setProgressUpdateCallback(progressUpdateCallback);
     }
 
     var framesLoadedCallback = function() {
+        
+        scope.getVideoFront = {
+            front:    function() { return framesFactory.getFrontFrames(true); },
+            profile:  function() { return framesFactory.getProfileFrames(true); },
+            skills:   function() { return framesFactory.getSkillsFrames(true); },
+            interest: function() { return framesFactory.getInterestFrames(true); },
+        }
+        scope.getVideoEnd = {
+            front:    function() { return framesFactory.getFrontFrames(false); },
+            profile:  function() { return framesFactory.getProfileFrames(false); },
+            skills:   function() { return framesFactory.getSkillsFrames(false); },
+            interest: function() { return framesFactory.getInterestFrames(false); },
+        }
+
         scope.framesLoadedFlag = true;
+
         if(scope.bgControl.isPlaying()) {
             setCurrentFrames();
         }else{
@@ -65,9 +70,15 @@ angular.module('myApp.controllers', [])
                 scope.bgControl.drawAgain();
             }
         } 
-        document.getElementBy
         scope.$apply();
     };
+
+    var progressUpdateCallback = function(progress) {
+        scope.progress = parseInt(progress * 100);
+        scope.$apply();
+    };
+
+    
 
     var setCurrentFrames = function() {
         var frames;
@@ -77,6 +88,7 @@ angular.module('myApp.controllers', [])
         }else{
             frames = scope.getVideoEnd[video_path]();
         }
+
         scope.bgControl.setFrames(frames);
     }
 
@@ -126,15 +138,17 @@ angular.module('myApp.controllers', [])
     // BEGIN: API
     scope.playVideo = function(video_path) {
         
-        if(scope.prev_path === null){
+        if(scope.prevPath === null){
             // 初期状態
+
+
             var frames = scope.getVideoFront[video_path]();
             scope.bgControl.setFrames(frames);
             scope.bgControl.play();
             currentFrame.path = video_path;
             currentFrame.front = true;
             scope.bgControl.addEventWhenEnded(function() {
-                scope.prev_path = video_path;
+                scope.prevPath = video_path;
                 scope.bgControl.clearAllEvents();
             });
         }else{
@@ -146,9 +160,9 @@ angular.module('myApp.controllers', [])
             
             //    A   <- transition <-    B
             // reverse         <-      forward   
-            var from = scope.getVideoEnd[scope.prev_path]();
+            var from = scope.getVideoEnd[scope.prevPath]();
             var to = scope.getVideoFront[video_path]();
-            scope.prev_path = video_path;
+            scope.prevPath = video_path;
             scope.bgControl.pause();
             
             scope.playVideoWithTransition(from, to, video_path);
@@ -161,7 +175,7 @@ angular.module('myApp.controllers', [])
         scope.bgControl.clearAllEvents();
         scope.bgControl.setFrames(from);
         scope.bgControl.play();
-        currentFrame.path = scope.prev_path;
+        currentFrame.path = scope.prevPath;
         currentFrame.front = false;
 
         scope.bgControl.addEventWhenEnded(function() {

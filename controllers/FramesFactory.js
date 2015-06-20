@@ -6,16 +6,7 @@ angular.module('myApp.factory', [])
         var frontFramesPathPrefix,
             endFramesPathPrefix,
             direction,
-
-            frontFrames = [],
-            profileFrames = [],
-            skillsFrames = [],
-            interestFrames = [],
-
-            frontEndFrames = [],
-            profileEndFrames = [],
-            skillsEndFrames = [],
-            interestEndFrames = [],
+            frames = {},
             loadedCallback = null,
             progressUpdateCallback = null
             ;
@@ -26,19 +17,7 @@ angular.module('myApp.factory', [])
             return zeros.substring(zeros.length - len, zeros.length);
         }
 
-        var totalLength = 227;
-        var loadedLen = 0;
-        var loaded = function() {
-            loadedLen ++;
-            if(typeof progressUpdateCallback === 'function') {
-                progressUpdateCallback(loadedLen / totalLength * 100);
-            }
-            if(loadedLen >= totalLength) {
-                if(typeof loadedCallback === 'function') {
-                    loadedCallback();
-                }
-            }
-        };
+        
         var configurePath = function() {
             direction = "vertical";
             if(CURRENT_SCREEN == HORIZONTAL_SCREEN) {
@@ -50,21 +29,17 @@ angular.module('myApp.factory', [])
 
         var loadFrames = function() {
             loadedLen = 0;
-            frontFrames = [];
-            profileFrames = [];
-            skillsFrames = [];
-            interestFrames = [];
-            frontEndFrames = [];
-            profileEndFrames = [];
-            skillsEndFrames = [];
-            interestEndFrames = [];
+            frames = {};
+            var links = [];
+            var imageLinks = [];
 
             // front
             for (var i = 0; i < 47; i++) {
-                var img = new Image;
-                img.src = frontFramesPathPrefix+"front"+leadingZeroString(2, i)+".jpg";
-                img.onload = loaded;
-                frontFrames.push(img);
+                imageLinks.push({
+                    src:       frontFramesPathPrefix+"front"+leadingZeroString(2, i)+".jpg",
+                    group:     'front',
+                    direction: 'front',
+                });
             };
 
             // for (var i = 0; i < 40; i++) {
@@ -74,25 +49,28 @@ angular.module('myApp.factory', [])
             // };
             
             for (var i = 0; i < 10; i++) {
-                var img = new Image;
-                img.src = frontFramesPathPrefix+"skills"+leadingZeroString(2, i)+".jpg";
-                img.onload = loaded;
-                skillsFrames.push(img);
+                imageLinks.push({
+                    src:       frontFramesPathPrefix+"skills"+leadingZeroString(2, i)+".jpg",
+                    group:     'skills',
+                    direction: 'front',
+                });
             };
 
             for (var i = 0; i < 28; i++) {
-                var img = new Image;
-                img.src = frontFramesPathPrefix+"dice"+leadingZeroString(2, i)+".jpg";
-                img.onload = loaded;
-                interestFrames.push(img);
+                imageLinks.push({
+                    src:       frontFramesPathPrefix+"dice"+leadingZeroString(2, i)+".jpg",
+                    group:     'interest',
+                    direction: 'front',
+                });
             };
 
             // end
             for (var i = 0; i < 37; i++) {
-                var img = new Image;
-                img.src = endFramesPathPrefix+"front"+leadingZeroString(2, i)+".jpg";
-                img.onload = loaded;
-                frontEndFrames.push(img);
+                imageLinks.push({
+                    src:       endFramesPathPrefix+"front"+leadingZeroString(2, i)+".jpg",
+                    group:     'front',
+                    direction: 'end',
+                });
             };
 
             // for (var i = 0; i < 45; i++) {
@@ -102,21 +80,70 @@ angular.module('myApp.factory', [])
             // };
 
             for (var i = 0; i < 66; i++) {
-                var img = new Image;
-                img.src = endFramesPathPrefix+"skills"+leadingZeroString(2, i)+".jpg";
-                img.onload = loaded;
-                skillsEndFrames.push(img);
+                imageLinks.push({
+                    src:       endFramesPathPrefix+"skills"+leadingZeroString(2, i)+".jpg",
+                    group:     'skills',
+                    direction: 'end',
+                });
             };
 
             for (var i = 0; i < 39; i++) {
-                var img = new Image;
+                var src = "";
                 if(i > 24) {
-                    img.src = endFramesPathPrefix+"dice25.jpg";
+                    src = endFramesPathPrefix+"dice25.jpg";
                 }else{
-                    img.src = endFramesPathPrefix+"dice"+leadingZeroString(2, i)+".jpg";    
+                    src = endFramesPathPrefix+"dice"+leadingZeroString(2, i)+".jpg";    
                 }
-                img.onload = loaded;
-                interestEndFrames.push(img);
+
+                imageLinks.push({
+                    src:       src,
+                    group:     'interest',
+                    direction: 'end',
+                });
+            };
+
+            for (var i = 0; i < imageLinks.length; i++) {
+                links.push(imageLinks[i].src);
+            }
+
+            var loader = new ImageLoader(links);
+
+            loader.setProgressUpdatedCallback(progressUpdateCallback);
+            loader.setLoadedCallback(loadedCallback);
+            loader.load();
+
+
+            var imagesTag = loader.getImagesTag();
+            for (var i = 0; i < imageLinks.length; i++) {
+                var link = imageLinks[i];
+                var indexName = link.group + "_" + link.direction;
+                if(typeof frames[indexName] === 'undefined') {
+                    frames[indexName] = [];
+                }
+
+                for (var j = 0; j < imagesTag.length; j++) {
+                    var imageTag = imagesTag[j];
+
+                    var imageTagSrc = imageTag.src;
+                    var pathPosition = -1;
+                    if(link.direction == 'end') {
+                        pathPosition = imageTagSrc.indexOf(endFramesPathPrefix);
+                    }else {
+                        pathPosition = imageTagSrc.indexOf(frontFramesPathPrefix);
+                     
+                    }
+
+                    if(pathPosition > 0 ) {
+                        imageTagSrc = imageTagSrc.substring(pathPosition, imageTagSrc.length);    
+                    }
+                    
+                    if(imageTagSrc == link.src) {
+                        link.tag = imageTag;
+                        frames[indexName].push(imageTag);
+                        break;      
+                    }
+                };
+                
             };
         }
 
@@ -126,27 +153,27 @@ angular.module('myApp.factory', [])
         return {
             getFrontFrames: function(front) { 
                 if(front) {
-                    return frontFrames;    
+                    return frames["front_front"];
                 }
-                return frontEndFrames;
+                return frames["front_end"];
             },
             getProfileFrames: function(front) { 
                 if(front) {
-                    return profileFrames;    
+                    return frames["profile_front"];
                 }
-                return profileEndFrames;
+                return frames["profile_end"];;
             },
             getSkillsFrames: function(front) { 
                 if(front) {
-                    return skillsFrames;    
+                    return frames["skills_front"];;    
                 }
-                return skillsEndFrames;
+                return frames["skills_end"];;
             },
             getInterestFrames: function(front) { 
                 if(front) {
-                    return interestFrames;    
+                    return frames["interest_front"];;    
                 }
-                return interestEndFrames;
+                return frames["interest_end"];;
             },
             setProgressUpdateCallback: function(cb) {
                 progressUpdateCallback = cb;

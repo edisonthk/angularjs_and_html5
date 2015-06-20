@@ -15,6 +15,7 @@
     <div ng-if="system.initial || !framesLoadedFlag" class="spinner">
         <img src="spinner2.gif">
         <p>Loading ...</p>
+        <p><span ng-bind="progress">0</span> %</p>
     </div>
     
     <ng-include src="'/views/index.html'" onload="indexLoadedCallback()"></ng-include>
@@ -31,6 +32,7 @@
 	<script src="/dist/angularjs/angular-resource.min.js"></script>
 	<script src="/controllers/FramesFactory.js"></script>
 	<script src="/controllers/helloController.js"></script>
+    <script src="/directives/ImageLoader.js"></script>
 	<script src="/directives/background.js"></script>
 	<script src="/directives/body.js"></script>
 	<script src="/routes.js"></script>

@@ -197,7 +197,7 @@ angular.module('myApp.background',[])
         scope.control.setFrames = function(frames) {
             scope.control.stop();
             currentFrames = frames;
-            if(currentFrames.length > 0) {
+            if(currentFrames && currentFrames.length > 0) {
                 currentFrame = currentFrames[0];
             }
         }
