@@ -24,6 +24,9 @@ small {
 h1,h2,h3{
   	margin-bottom: 10px;	
 }
+strong {
+    font-weight: 
+}
 .bg {
 	position: absolute;
 	z-index: -1;
@@ -181,6 +184,24 @@ h1,h2,h3{
 	font-weight: bold;
 }
 
+.btn-share {
+    padding: 5px 10px;
+    font-size: 15px;
+    font-weight: 500;
+}
+.btn-share.btn-twitter {
+    background: #279ebf;
+    color: white;
+}
+.btn-share.btn-github {
+    background: rgb(51, 51, 51);
+    color: white
+}
+.btn-share.btn-fb {
+    background: #3B5997;
+    color: white;
+}
+
 @media (max-width: 670px) {
     .sidewidth {
         width: 75px;
@@ -212,6 +233,10 @@ h1,h2,h3{
     .board * {
         font-size: 75%;
     }
+    .board strong {
+        padding: 0;
+        font-weight: bold;
+    }
     .content .title {
         font-size: 20px;
     }
@@ -219,3 +244,4 @@ h1,h2,h3{
         width: inherit;
     }
 }
+
